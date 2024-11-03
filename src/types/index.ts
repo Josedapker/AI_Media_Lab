@@ -4,6 +4,7 @@ export type VideoGenerationType = 'text-to-video' | 'image-to-video';
 export interface GenerationRequest {
   prompt: string;
   type: GenerationType;
+  model?: string;
   sourceImage?: string;
   negativePrompt?: string;
   steps?: number;

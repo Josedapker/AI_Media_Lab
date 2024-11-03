@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
-import { ImageIcon, Video, Wand2, Loader } from 'lucide-react';
+
+import clsx from 'clsx';
+import {
+  ImageIcon,
+  Loader,
+  Video,
+  Wand2,
+} from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
-import { ModelSelector } from './ModelSelector';
+
+import { useGeneration } from '../hooks/useGeneration';
 import { LoRASelector } from './LoRASelector';
 import { MediaPreview } from './MediaPreview';
-import { useGeneration } from '../hooks/useGeneration';
-import clsx from 'clsx';
+import { ModelSelector } from './ModelSelector';
 
 export function GenerationForm() {
   const [activeType, setActiveType] = useState<'image' | 'video'>('image');
@@ -14,13 +21,14 @@ export function GenerationForm() {
   const [model, setModel] = useState('flux');
   const [loraStyle, setLoraStyle] = useState('none');
   const [sourceImage, setSourceImage] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
   
   const { generate, isGenerating, progress } = useGeneration();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       'image/*': ['.png', '.jpg', '.jpeg'],
-      'video/*': generationType === 'video' ? ['.mp4', '.mov'] : [],
+      'video/*': activeType === 'video' ? ['.mp4', '.mov'] : [],
     },
     maxFiles: 1,
     onDrop: (acceptedFiles) => {
@@ -33,17 +41,23 @@ export function GenerationForm() {
     e.preventDefault();
     if (!prompt.trim()) return;
 
+    setError(null);
+    
     try {
       await generate({
         type: activeType,
         prompt: prompt.trim(),
+        model: model,
         sourceImage: sourceImage ? URL.createObjectURL(sourceImage) : undefined,
       });
       
       setPrompt('');
       setSourceImage(null);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Generation failed:', error);
+      setError(
+        error instanceof Error ? error.message : 'Generation failed. Please try again.'
+      );
     }
   };
 
@@ -101,6 +115,12 @@ export function GenerationForm() {
         </div>
       </div>
 
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">
+          {error}
+        </div>
+      )}
+      
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
           <ModelSelector type={activeType} value={model} onChange={setModel} />

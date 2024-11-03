@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import type { GenerationRequest, GeneratedMedia } from '../types';
-import { generateMedia } from '../lib/api';
+
+import { generateImage } from '../services/generationService';
+import type { GenerationRequest } from '../types';
 
 export function useGeneration() {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -12,12 +13,11 @@ export function useGeneration() {
       setIsGenerating(true);
       setError(null);
       
-      // Simulate progress updates
       const progressInterval = setInterval(() => {
         setProgress(prev => Math.min(prev + 10, 90));
       }, 500);
       
-      const result = await generateMedia(request);
+      const result = await generateImage(request);
       
       clearInterval(progressInterval);
       setProgress(100);

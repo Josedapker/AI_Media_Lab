@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Brain } from 'lucide-react';
 
 interface ModelOption {
@@ -18,9 +19,11 @@ const textModels: ModelOption[] = [
 ];
 
 const imageModels: ModelOption[] = [
+  { id: 'stabilityai/sdxl-turbo', name: 'SDXL Turbo', type: 'image' },
+  { id: 'runwayml/stable-diffusion-v1-5', name: 'SD 1.5', type: 'image' },
+  { id: 'CompVis/stable-diffusion-v1-4', name: 'SD 1.4', type: 'image' },
   { id: 'flux', name: 'Flux', type: 'image' },
-  { id: 'sdxl', name: 'Stable Diffusion', type: 'image' },
-  { id: 'pixelartxl', name: 'PixelArtXL', type: 'image' },
+  { id: 'pixelartxl', name: 'PixelArtXL', type: 'image' }
 ];
 
 const videoModels: ModelOption[] = [
